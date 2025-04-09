@@ -98,8 +98,10 @@ void getSpeedString(float bytePerSecond, char *out)
         sprintf(out, "%.2f b/s (", bitPerSecond);
     else if(bitPerSecond < 1024.0f * 1024.0f)
         sprintf(out, "%.2f Kb/s (", bitPerSecond / 1024.0f);
-    else
+    else if(bitPerSecond < 1024.0f * 1024.0f * 1024.0f)
         sprintf(out, "%.2f Mb/s (", bitPerSecond / (1024.0f * 1024.0f));
+    else
+        sprintf(out, "%.2f Gb/s (", bitPerSecond / (1024.0f * 1024.0f * 1024.0f));
 
     out += strlen(out);
 
@@ -107,8 +109,10 @@ void getSpeedString(float bytePerSecond, char *out)
         sprintf(out, "%.2f B/s)", bytePerSecond);
     else if(bytePerSecond < 1024.0f * 1024.0f)
         sprintf(out, "%.2f KB/s)", bytePerSecond / 1024.0f);
-    else
+    else if(bytePerSecond < 1024.0f * 1024.0f * 1024.0f)
         sprintf(out, "%.2f MB/s)", bytePerSecond / (1024.0f * 1024.0f));
+    else
+        sprintf(out, "%.2f GB/s)", bytePerSecond / (1024.0f * 1024.0f * 1024.0f));
 }
 
 void secsToTime(uint32_t seconds, char *out)
@@ -331,10 +335,16 @@ void shutdownDebug()
     WHBLogCafeDeinit();
 }
 
-void restartUdpLog()
+void restartUdpLog1()
 {
+    spinLock(debugLock);
     WHBLogUdpDeinit();
+}
+
+void restartUdpLog2()
+{
     WHBLogUdpInit();
+    spinReleaseLock(debugLock);
 }
 
 void debugPrintf(const char *str, ...)

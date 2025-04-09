@@ -29,10 +29,10 @@
 #include <coreinit/mcp.h>
 #pragma GCC diagnostic pop
 
-#define NUSSPLI_VERSION            "1.153-ALPHA1"
+#define NUSSPLI_VERSION            "1.157-ALPHA2"
 
 #define NAPI_URL                   "https://napi.v10lator.de/v2/"
-#define NUSSPLI_COPYRIGHT          "© 2020-2024 V10lator <v10lator@myway.de>"
+#define NUSSPLI_COPYRIGHT          "© 2020-2025 V10lator <v10lator@myway.de>"
 
 #define CUSTOM_MCP_ERROR_EOM       ((int)0xDEAD0001)
 #define CUSTOM_MCP_ERROR_CANCELLED ((int)0xDEAD0002)
@@ -47,7 +47,8 @@
 #define checkStacks(...)
 #define debugInit()
 #define shutdownDebug()
-#define restartUdpLog()
+#define restartUdpLog1()
+#define restartUdpLog2()
 #endif
 
 #ifdef __cplusplus
@@ -85,7 +86,8 @@ extern "C"
 #ifdef NUSSPLI_DEBUG
     void debugInit();
     void shutdownDebug();
-    void restartUdpLog() __attribute__((__cold__));
+    void restartUdpLog1() __attribute__((__cold__));
+    void restartUdpLog2() __attribute__((__cold__));
     void debugPrintf(const char *str, ...);
     void checkStacks(const char *src);
 #endif

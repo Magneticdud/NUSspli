@@ -127,11 +127,10 @@ bool updateCheck()
                         ret = nv != NULL;
                         if(ret)
                         {
-                            int t = json_integer_value(json_object_get(json, "t"));
-                            if(t)
-                                ret = updateMenu(nv, t);
-                            else
-                                ret = false;
+                            jsonObj = json_object_get(json, "t");
+                            ret = jsonObj != NULL && json_is_integer(jsonObj);
+                            if(ret)
+                                ret = updateMenu(nv, json_integer_value(jsonObj));
                         }
                         break;
                     case 3: // TODO

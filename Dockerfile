@@ -1,4 +1,4 @@
-FROM devkitpro/devkitppc:20240702
+FROM devkitpro/devkitppc:20250102
 COPY --from=ghcr.io/wiiu-env/libmocha:20240603 /artifacts $DEVKITPRO
 COPY --from=ghcr.io/wiiu-env/librpxloader:20240425 /artifacts $DEVKITPRO
 
@@ -10,14 +10,14 @@ ENV DEBIAN_FRONTEND=noninteractive \
  AR=$DEVKITPPC/bin/powerpc-eabi-ar \
  RANLIB=$DEVKITPPC/bin/powerpc-eabi-ranlib \
  PKG_CONFIG=$DEVKITPRO/portlibs/wiiu/bin/powerpc-eabi-pkg-config \
- CFLAGS="-mcpu=750 -meabi -mhard-float -Ofast -ffunction-sections -fdata-sections" \
- CXXFLAGS="-mcpu=750 -meabi -mhard-float -Ofast -ffunction-sections -fdata-sections" \
+ CFLAGS="-mcpu=750 -meabi -mhard-float -Ofast -fipa-pta -ffunction-sections -fdata-sections" \
+ CXXFLAGS="-mcpu=750 -meabi -mhard-float -Ofast -fipa-pta -ffunction-sections -fdata-sections" \
  CPPFLAGS="-D__WIIU__ -D__WUT__ -I$DEVKITPRO/wut/include -L$DEVKITPRO/wut/lib" \
  LDFLAGS="-L$DEVKITPRO/wut/lib" \
  LIBS="-lwut -lm" \
  BROTLI_VER=1.1.0 \
- CURL_VER=8.8.0 \
- NGHTTP2_VER=1.62.0
+ CURL_VER=8.11.1 \
+ NGHTTP2_VER=1.64.0
 
 WORKDIR /
 
@@ -59,11 +59,9 @@ RUN git clone --depth 1 --single-branch https://github.com/google/brotli.git && 
 
 # Install libCURL since WUT doesn't ship with the latest version
 RUN curl -LO https://curl.se/download/curl-$CURL_VER.tar.xz && \
- curl -LO https://github.com/curl/curl/commit/0c4b4c1e93c8e869af230090f32346fdfd548f21.patch && \
  mkdir /curl && \
  tar xJf curl-$CURL_VER.tar.xz -C /curl --strip-components=1 && \
  cd curl && \
- patch -p1 < ../0c4b4c1e93c8e869af230090f32346fdfd548f21.patch && \
  autoreconf -fi && ./configure \
 --prefix=$DEVKITPRO/portlibs/wiiu/ \
 --host=powerpc-eabi \
@@ -105,21 +103,7 @@ RUN curl -LO https://curl.se/download/curl-$CURL_VER.tar.xz && \
  cd ../include && \
  make -j$(nproc) install && \
  cd ../.. && \
- rm -rf curl curl-$CURL_VER.tar.xz 0c4b4c1e93c8e869af230090f32346fdfd548f21.patch
-
-# Install libSDL since upstream is bugged
-RUN curl -LO https://libsdl.org/release/SDL2-2.26.5.tar.gz && \
-  curl -LO https://github.com/V10lator/NUSspli/raw/master/sdl.patch && \
-  mkdir -p sdl/build && \
-  tar xzf SDL2-2.26.5.tar.gz -C /sdl --strip-components=1 && \
-  cd sdl && \
-  patch -p1 < /sdl.patch && \
-  cd build && \
-  cmake -DCMAKE_TOOLCHAIN_FILE=$DEVKITPRO/wut/share/wut.toolchain.cmake -WIIU=1 -DWUT=1 \
-  -DCMAKE_BUILD_TYPE="Release" -DCMAKE_INSTALL_PREFIX=$DEVKITPRO/portlibs/wiiu .. && \
-  cmake --build . --config Release --target install -j$(nproc) && \
-  cd ../.. && \
-  rm -rf sdl SDL2-2.26.5.tar.gz sdl.patch
+ rm -rf curl curl-$CURL_VER.tar.xz
 
 RUN git config --global --add safe.directory /project && \
   git config --global --add safe.directory /project/SDL_FontCache && \

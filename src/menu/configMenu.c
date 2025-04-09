@@ -86,6 +86,12 @@ static inline void switchMenuLanguage()
         switch(lang)
         {
             case Swkbd_LanguageType__Invalid:
+                lang = Swkbd_LanguageType__Welsh;
+                break;
+            case Swkbd_LanguageType__Welsh:
+                lang = Swkbd_LanguageType__Turkish;
+                break;
+            case Swkbd_LanguageType__Turkish:
                 lang = Swkbd_LanguageType__Italian;
                 break;
             case Swkbd_LanguageType__Italian:
@@ -135,6 +141,12 @@ static inline void switchMenuLanguage()
                 break;
             case Swkbd_LanguageType__French:
                 lang = Swkbd_LanguageType__Italian;
+                break;
+            case Swkbd_LanguageType__Italian:
+                lang = Swkbd_LanguageType__Turkish;
+                break;
+            case Swkbd_LanguageType__Turkish:
+                lang = Swkbd_LanguageType__Welsh;
                 break;
             default:
                 lang = Swkbd_LanguageType__Invalid;
